@@ -1,4 +1,4 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SummaryForm from '../SummaryForm';
 
@@ -28,4 +28,22 @@ test('Checkbox disables button on first click and enables on second click', asyn
 
   await user.click(checkbox);
   expect(confirmButton).toBeDisabled();
+});
+
+test('Popover responds to hover', async () => {
+  const user = userEvent.setup();
+  render(<SummaryForm />);
+
+  const nullPopover = screen.queryByText(
+    /no ice cream will actually be delivered/i
+  );
+  expect(nullPopover).not.toBeInTheDocument;
+
+  const tAndCs = screen.getByText(/terms and conditions/i);
+  await user.hover(tAndCs);
+  const popover = screen.getByText(/no ice cream will actually be delivered/i);
+  expect(popover).toBeInTheDocument;
+
+  await user.unhover(tAndCs);
+  expect(popover).not.toBeInTheDocument;
 });
